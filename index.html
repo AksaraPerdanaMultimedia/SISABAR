@@ -9,7 +9,7 @@
 <style>
 :root{--bg:#EEF3F6;--card:#fff;--ink:#12263A;--mut:#5F7285;--line:#DCE5EC;--teal:#0E7C86;--warn:#E5484D;--warnbg:#FDECEC;--ok:#1F9D6B;--okbg:#E5F6EE;--amb:#B7791F}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Figtree,system-ui,sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 Figtree,system-ui,sans-serif}
 h1,h2,.big{font-family:'Bricolage Grotesque',sans-serif}
 header{background:linear-gradient(120deg,#0B3C49,#0E7C86 60%,#2BB3A3);color:#fff;padding:22px clamp(16px,4vw,48px)}
 .top{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center}
@@ -21,7 +21,7 @@ h1{margin:0;font-size:clamp(22px,4vw,34px);font-weight:800}
 main{padding:20px clamp(16px,4vw,48px) 48px;max-width:1280px;margin:auto}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:-46px}
 .kpi{background:var(--card);border-radius:14px;padding:16px 18px;box-shadow:0 6px 20px #12263a14;border-top:4px solid var(--teal)}
-.kpi .big{font-size:38px;font-weight:800;line-height:1.1}
+.kpi .big{font-size:30px;font-weight:800;line-height:1.1}
 .kpi span{color:var(--mut);font-size:13px}
 .kpi.alert{border-top-color:var(--warn);background:linear-gradient(180deg,var(--warnbg),#fff 70%)}
 .kpi.alert .big{color:var(--warn)}
@@ -31,7 +31,7 @@ main{padding:20px clamp(16px,4vw,48px) 48px;max-width:1280px;margin:auto}
 .banner b{color:var(--warn)}
 .banner ul{margin:8px 0 0;padding-left:18px}
 section{margin-top:26px}
-h2{font-size:22px;margin:0 0 10px}
+h2{font-size:19px;margin:0 0 10px}
 .tools{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px}
 input{padding:9px 14px;border:1px solid var(--line);border-radius:10px;min-width:220px;font:inherit;background:#fff}
 button{padding:9px 16px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;cursor:pointer}
@@ -40,7 +40,7 @@ button.act{background:var(--teal);color:#fff;border-color:var(--teal)}
 .wrap{background:var(--card);border-radius:14px;box-shadow:0 6px 20px #12263a10;overflow-x:auto}
 table{width:100%;border-collapse:collapse;min-width:820px}
 th{background:#F4F8FA;text-align:left;font-size:13px;color:var(--mut);padding:11px 14px;position:sticky;top:0}
-td{padding:11px 14px;border-top:1px solid var(--line)}
+td{padding:10px 14px;border-top:1px solid var(--line)}
 td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 tr.low{background:#FFF7F7}
 tr.low td:first-child{box-shadow:inset 4px 0 0 var(--warn)}
@@ -49,8 +49,9 @@ tbody tr:hover{background:#F2F8FA}
 .bar i{display:block;height:100%;width:0;border-radius:9px;background:var(--ok);transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
 .low .bar i{background:var(--warn)}
 .badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12.5px;font-weight:600}
-.b-low{background:var(--warn);color:#fff;animation:blink 1.4s infinite}
-@keyframes blink{50%{opacity:.65}}
+.b-low{color:#fff;font-size:11.5px;letter-spacing:.2px;white-space:nowrap;background:linear-gradient(110deg,#C23338 30%,#F0777B 50%,#C23338 70%);background-size:240% 100%;animation:sheen 3.4s ease-in-out infinite,breathe 2.4s ease-in-out infinite}
+@keyframes sheen{0%{background-position:130% 0}100%{background-position:-130% 0}}
+@keyframes breathe{0%,100%{opacity:1;box-shadow:0 0 0 0 #e5484d00}50%{opacity:.72;box-shadow:0 0 0 5px #e5484d22}}
 .b-ok{background:var(--okbg);color:var(--ok)}
 .b-na{background:#EDF1F4;color:var(--mut)}
 .chips{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 12px}
@@ -58,6 +59,34 @@ tbody tr:hover{background:#F2F8FA}
 .chip b{font-family:'Bricolage Grotesque';font-size:20px}
 .empty{padding:28px;text-align:center;color:var(--mut)}
 #err{display:none;margin-top:14px;background:#FFF4DB;border:1px solid #F0D58A;border-radius:10px;padding:10px 14px}
+@media(max-width:720px){
+ body{font-size:13px}
+ header{padding:16px 14px 52px}
+ main{padding:0 12px 32px}
+ .kpis{grid-template-columns:1fr 1fr;gap:10px;margin-top:-36px}
+ .kpi{padding:12px 14px}.kpi .big{font-size:26px}
+ .live{font-size:11.5px;padding:6px 12px;flex-wrap:wrap}
+ .banner{padding:12px 14px}
+ input{width:100%;min-width:0}
+ .wrap{overflow:visible;background:none;box-shadow:none}
+ table,tbody,tr,td{display:block;min-width:0!important}
+ thead{display:none}
+ tbody tr{background:var(--card);border-radius:12px;box-shadow:0 3px 12px #12263a12;margin-bottom:10px;padding:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px 6px;border-top:0}
+ tr.low{background:#FFF7F7;box-shadow:inset 4px 0 0 var(--warn),0 3px 12px #12263a12}
+ tr.low td:first-child{box-shadow:none}
+ td{border:0;padding:0}
+ td.n,td{text-align:left}
+ td[data-l]::before{content:attr(data-l);display:block;font-size:10.5px;color:var(--mut)}
+ td.kode{grid-column:1/-1;color:var(--mut);font-size:11.5px}
+ td.nama{grid-column:1/-1;font-size:14.5px;margin-top:-6px}
+ td.akhir{grid-column:span 2;order:1;font-size:17px}
+ td.stat{grid-column:span 2;order:1;align-self:end}
+ td.lvl{grid-column:1/-1;order:2}
+ td.tgl{grid-column:1/-1;font-weight:600}
+ td.ket{grid-column:1/-1}
+ #t2 tbody tr{grid-template-columns:1fr 1fr}
+ #t2 td.n,#t2 td.kd{grid-column:span 1}
+}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -71,7 +100,6 @@ tbody tr:hover{background:#F2F8FA}
     <div class="kpi"><div class="big" id="k1">0</div><span>Jenis barang dipantau</span></div>
     <div class="kpi alert" id="kcard"><div class="big" id="k2">0</div><span>Perlu segera di-request</span></div>
     <div class="kpi"><div class="big" id="k3">0</div><span>Total barang rusak</span></div>
-    <div class="kpi"><div class="big" id="k4">0</div><span>Barang keluar (periode)</span></div>
   </div>
   <div id="err">Data belum bisa dimuat. Cek koneksi internet atau URL Apps Script di index.html; dashboard mencoba lagi otomatis.</div>
   <div id="banner"></div>
@@ -83,7 +111,7 @@ tbody tr:hover{background:#F2F8FA}
       <button id="fAll" class="act">Semua</button>
       <button id="fLow">Perlu request</button>
     </div>
-    <div class="wrap"><table>
+    <div class="wrap"><table id="t1">
       <thead><tr><th>Kode</th><th>Nama Barang</th><th class="n">Stok Awal</th><th class="n">Masuk</th><th class="n">Keluar</th><th class="n">Rusak</th><th class="n">Stok Akhir</th><th>Level stok</th><th>Status</th></tr></thead>
       <tbody id="rekap"></tbody>
     </table></div>
@@ -92,7 +120,7 @@ tbody tr:hover{background:#F2F8FA}
   <section>
     <h2>Barang Rusak</h2>
     <div class="chips" id="ket"></div>
-    <div class="wrap"><table style="min-width:640px">
+    <div class="wrap"><table id="t2" style="min-width:640px">
       <thead><tr><th>Tanggal</th><th>Kode</th><th>Nama Barang</th><th class="n">Jumlah</th><th>Keterangan</th></tr></thead>
       <tbody id="rusak"></tbody>
     </table></div>
@@ -108,6 +136,19 @@ let DATA = null, onlyLow = false, first = true, left = REFRESH_MS / 1000;
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const nf = n => Number(n).toLocaleString('id-ID');
+const HARI = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+const BLN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const BEN = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+function tgl(s){
+  s = String(s || '').trim(); if (!s) return '-';
+  let m, d;
+  if (m = s.match(/^(\d{4})-(\d{2})-(\d{2})/)) d = new Date(+m[1], m[2] - 1, +m[3]);
+  else if (m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/)) d = new Date(+m[3], m[2] - 1, +m[1]);
+  else if (m = s.match(/^\w{3} (\w{3}) (\d{1,2}) (\d{4})/)) d = new Date(+m[3], BEN[m[1]], +m[2]);
+  else d = new Date(s);
+  if (isNaN(d)) return esc(s);
+  return HARI[d.getDay()] + ', ' + d.getDate() + ' ' + BLN[d.getMonth()] + ' ' + d.getFullYear();
+}
 const isLow = r => r.limit !== null && r.akhir <= r.limit;
 
 function countUp(el, to){
@@ -121,9 +162,8 @@ function render(){
   countUp($('k1'), d.rekap.filter(r => r.limit !== null).length);
   countUp($('k2'), low.length);
   countUp($('k3'), d.rusak.reduce((a, r) => a + r.jumlah, 0));
-  countUp($('k4'), d.rekap.reduce((a, r) => a + r.keluar, 0));
   $('kcard').classList.toggle('on', low.length > 0);
-  $('upd').textContent = 'Diperbarui ' + d.updated;
+  $('upd').textContent = 'Diperbarui ' + tgl(d.updated);
 
   $('banner').innerHTML = low.length
     ? '<div class="banner"><b>Harus segera di requestkan</b><ul>' + low.map(r =>
@@ -138,10 +178,10 @@ function render(){
     const st = kosong ? '<span class="badge b-na">Barang Tidak Tersedia</span>'
       : r.limit === null ? '<span class="badge b-na">Tidak dipantau</span>'
       : low ? '<span class="badge b-low">Harus segera di requestkan</span>' : '<span class="badge b-ok">Aman</span>';
-    return `<tr class="${low && !kosong ? 'low' : ''}"><td>${esc(r.kode)}</td><td><b>${esc(r.nama)}</b></td>
-      <td class="n">${nf(r.awal)}</td><td class="n">${nf(r.masuk)}</td><td class="n">${nf(r.keluar)}</td><td class="n">${nf(r.rusak)}</td>
-      <td class="n"><b>${nf(r.akhir)}</b></td>
-      <td><div class="bar"><i data-w="${pct}"></i></div></td><td>${st}</td></tr>`;
+    return `<tr class="${low && !kosong ? 'low' : ''}"><td class="kode">${esc(r.kode)}</td><td class="nama"><b>${esc(r.nama)}</b></td>
+      <td class="n" data-l="Awal">${nf(r.awal)}</td><td class="n" data-l="Masuk">${nf(r.masuk)}</td><td class="n" data-l="Keluar">${nf(r.keluar)}</td><td class="n" data-l="Rusak">${nf(r.rusak)}</td>
+      <td class="n akhir" data-l="Stok Akhir"><b>${nf(r.akhir)}</b></td>
+      <td class="lvl"><div class="bar"><i data-w="${pct}"></i></div></td><td class="stat">${st}</td></tr>`;
   }).join('') : '<tr><td colspan="9" class="empty">Tidak ada barang yang cocok.</td></tr>';
   requestAnimationFrame(() => requestAnimationFrame(() => document.querySelectorAll('.bar i').forEach(i => i.style.width = i.dataset.w + '%')));
 
@@ -149,7 +189,7 @@ function render(){
   d.rusak.forEach(r => { const k = r.ket || 'Belum ada keterangan'; by[k] = (by[k] || 0) + r.jumlah; });
   $('ket').innerHTML = Object.keys(by).map(k => `<div class="chip"><b>${nf(by[k])}</b> pcs<br><small>${esc(k)}</small></div>`).join('');
   $('rusak').innerHTML = d.rusak.length ? d.rusak.map(r =>
-    `<tr><td>${esc(r.tanggal)}</td><td>${esc(r.kode)}</td><td>${esc(r.nama)}</td><td class="n">${nf(r.jumlah)}</td><td>${esc(r.ket) || '-'}</td></tr>`).join('')
+    `<tr><td class="tgl">${tgl(r.tanggal)}</td><td class="kd" data-l="Kode">${esc(r.kode)}</td><td class="nama">${esc(r.nama)}</td><td class="n" data-l="Jumlah">${nf(r.jumlah)}</td><td class="ket" data-l="Keterangan">${esc(r.ket) || '-'}</td></tr>`).join('')
     : '<tr><td colspan="5" class="empty">Belum ada barang rusak tercatat.</td></tr>';
   first = false;
 }
