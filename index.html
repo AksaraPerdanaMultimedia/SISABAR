@@ -84,7 +84,7 @@ tbody tr:hover{background:#F2F8FA}
       <button id="fLow">Perlu request</button>
     </div>
     <div class="wrap"><table>
-      <thead><tr><th>Kode</th><th>Nama Barang</th><th class="n">Stok Awal</th><th class="n">Masuk</th><th class="n">Keluar</th><th class="n">Rusak</th><th class="n">Stok Akhir</th><th class="n">Limit</th><th>Level stok</th><th>Status</th></tr></thead>
+      <thead><tr><th>Kode</th><th>Nama Barang</th><th class="n">Stok Awal</th><th class="n">Masuk</th><th class="n">Keluar</th><th class="n">Rusak</th><th class="n">Stok Akhir</th><th>Level stok</th><th>Status</th></tr></thead>
       <tbody id="rekap"></tbody>
     </table></div>
   </section>
@@ -127,20 +127,22 @@ function render(){
 
   $('banner').innerHTML = low.length
     ? '<div class="banner"><b>Harus segera di requestkan</b><ul>' + low.map(r =>
-        `<li>${esc(r.nama)}: sisa <b>${nf(r.akhir)}</b> (limit ${nf(r.limit)})</li>`).join('') + '</ul></div>'
+        `<li>${esc(r.nama)}: sisa <b>${nf(r.akhir)}</b></li>`).join('') + '</ul></div>'
     : '';
 
   const q = $('q').value.trim().toLowerCase();
   const rows = d.rekap.filter(r => (!onlyLow || isLow(r)) && (r.kode + ' ' + r.nama).toLowerCase().includes(q));
   $('rekap').innerHTML = rows.length ? rows.map(r => {
     const low = isLow(r), pct = r.limit ? Math.min(100, Math.round(r.akhir / (r.limit * 3) * 100)) : (r.akhir > 0 ? 100 : 0);
-    const st = r.limit === null ? '<span class="badge b-na">Tidak dipantau</span>'
+    const kosong = !r.awal && !r.masuk && !r.keluar && !r.rusak && !r.akhir;
+    const st = kosong ? '<span class="badge b-na">Barang Tidak Tersedia</span>'
+      : r.limit === null ? '<span class="badge b-na">Tidak dipantau</span>'
       : low ? '<span class="badge b-low">Harus segera di requestkan</span>' : '<span class="badge b-ok">Aman</span>';
-    return `<tr class="${low ? 'low' : ''}"><td>${esc(r.kode)}</td><td><b>${esc(r.nama)}</b></td>
+    return `<tr class="${low && !kosong ? 'low' : ''}"><td>${esc(r.kode)}</td><td><b>${esc(r.nama)}</b></td>
       <td class="n">${nf(r.awal)}</td><td class="n">${nf(r.masuk)}</td><td class="n">${nf(r.keluar)}</td><td class="n">${nf(r.rusak)}</td>
-      <td class="n"><b>${nf(r.akhir)}</b></td><td class="n">${r.limit === null ? '-' : nf(r.limit)}</td>
+      <td class="n"><b>${nf(r.akhir)}</b></td>
       <td><div class="bar"><i data-w="${pct}"></i></div></td><td>${st}</td></tr>`;
-  }).join('') : '<tr><td colspan="10" class="empty">Tidak ada barang yang cocok.</td></tr>';
+  }).join('') : '<tr><td colspan="9" class="empty">Tidak ada barang yang cocok.</td></tr>';
   requestAnimationFrame(() => requestAnimationFrame(() => document.querySelectorAll('.bar i').forEach(i => i.style.width = i.dataset.w + '%')));
 
   const by = {};
