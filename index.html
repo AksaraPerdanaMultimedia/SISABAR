@@ -83,7 +83,10 @@ tbody tr:hover{background:#F2F8FA}
  td.stat{grid-column:span 2;order:1;align-self:end}
  td.lvl{grid-column:1/-1;order:2}
  td.tgl{grid-column:1/-1;font-weight:600}
- td.ket{grid-column:1/-1}
+ td.ket,td.ret{grid-column:1/-1}
+ #t2 td:empty{display:none}
+ td[data-l]::before{font-weight:400}
+ td.tgl{font-size:14px}
  #t2 tbody tr{grid-template-columns:1fr 1fr}
  #t2 td.n,#t2 td.kd{grid-column:span 1}
 }
@@ -120,8 +123,8 @@ tbody tr:hover{background:#F2F8FA}
   <section>
     <h2>Barang Rusak</h2>
     <div class="chips" id="ket"></div>
-    <div class="wrap"><table id="t2" style="min-width:640px">
-      <thead><tr><th>Tanggal</th><th>Kode</th><th>Nama Barang</th><th class="n">Jumlah</th><th>Keterangan</th></tr></thead>
+    <div class="wrap"><table id="t2" style="min-width:760px">
+      <thead><tr><th>Tanggal Report Kerusakan</th><th>Kode</th><th>Nama Barang</th><th class="n">Jumlah</th><th>Keterangan</th><th>Tanggal Return</th></tr></thead>
       <tbody id="rusak"></tbody>
     </table></div>
   </section>
@@ -189,8 +192,8 @@ function render(){
   d.rusak.forEach(r => { const k = r.ket || 'Belum ada keterangan'; by[k] = (by[k] || 0) + r.jumlah; });
   $('ket').innerHTML = Object.keys(by).map(k => `<div class="chip"><b>${nf(by[k])}</b> pcs<br><small>${esc(k)}</small></div>`).join('');
   $('rusak').innerHTML = d.rusak.length ? d.rusak.map(r =>
-    `<tr><td class="tgl">${tgl(r.tanggal)}</td><td class="kd" data-l="Kode">${esc(r.kode)}</td><td class="nama">${esc(r.nama)}</td><td class="n" data-l="Jumlah">${nf(r.jumlah)}</td><td class="ket" data-l="Keterangan">${esc(r.ket) || '-'}</td></tr>`).join('')
-    : '<tr><td colspan="5" class="empty">Belum ada barang rusak tercatat.</td></tr>';
+    `<tr><td class="tgl" data-l="Tanggal Report Kerusakan">${tgl(r.tanggal)}</td><td class="kd" data-l="Kode">${esc(r.kode)}</td><td class="nama">${esc(r.nama)}</td><td class="n" data-l="Jumlah">${nf(r.jumlah)}</td><td class="ket" data-l="Keterangan">${esc(r.ket) || '-'}</td><td class="ret" data-l="Tanggal Return">${r.ret ? tgl(r.ret) : ''}</td></tr>`).join('')
+    : '<tr><td colspan="6" class="empty">Belum ada barang rusak tercatat.</td></tr>';
   first = false;
 }
 
