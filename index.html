@@ -59,7 +59,20 @@ tbody tr:hover{background:#F2F8FA}
 .chip b{font-family:'Bricolage Grotesque';font-size:20px}
 .empty{padding:28px;text-align:center;color:var(--mut)}
 #err{display:none;margin-top:14px;background:#FFF4DB;border:1px solid #F0D58A;border-radius:10px;padding:10px 14px}
+tr.mid td:first-child{box-shadow:inset 4px 0 0 #F2B01E}
+.mid .bar i{background:#F2B01E}
+.b-warn{color:#5A3B00;font-size:11.5px;letter-spacing:.2px;white-space:nowrap;background:linear-gradient(110deg,#F2B01E 30%,#FFE29A 50%,#F2B01E 70%);background-size:240% 100%;animation:sheen 3.4s ease-in-out infinite,breatheY 2.4s ease-in-out infinite}
+@keyframes breatheY{0%,100%{opacity:1;box-shadow:0 0 0 0 #f2b01e00}50%{opacity:.78;box-shadow:0 0 0 5px #f2b01e33}}
+.aman{padding:34px 12px!important}
+.thumb{display:inline-block;width:84px;height:84px;line-height:84px;font-size:44px;border-radius:50%;background:var(--okbg);animation:ring 2.4s ease-out infinite}
+.thumb span{display:inline-block;animation:bob 2.2s ease-in-out infinite}
+@keyframes ring{0%{box-shadow:0 0 0 0 #1f9d6b55}70%,100%{box-shadow:0 0 0 20px #1f9d6b00}}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-8deg) scale(1)}50%{transform:translateY(-7px) rotate(8deg) scale(1.12)}}
+.amantxt{margin-top:10px;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px;letter-spacing:2px;color:var(--ok);background:linear-gradient(110deg,#1F9D6B 30%,#6BE3B0 50%,#1F9D6B 70%);background-size:240% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:sheen 3.4s ease-in-out infinite}
+.aman small{display:block;margin-top:2px}
 @media(max-width:720px){
+ tbody tr.emptyrow{display:block;padding:0}
+ tr.mid{box-shadow:inset 4px 0 0 #F2B01E,0 3px 12px #12263a12}
  body{font-size:13px}
  header{padding:16px 14px 52px}
  main{padding:0 12px 32px}
@@ -73,7 +86,7 @@ tbody tr:hover{background:#F2F8FA}
  thead{display:none}
  tbody tr{background:var(--card);border-radius:12px;box-shadow:0 3px 12px #12263a12;margin-bottom:10px;padding:12px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 6px;min-width:0;width:100%;border-top:0}
  tr.low{background:#FFF7F7;box-shadow:inset 4px 0 0 var(--warn),0 3px 12px #12263a12}
- tr.low td:first-child{box-shadow:none}
+ tr.low td:first-child,tr.mid td:first-child{box-shadow:none}
  td{border:0;padding:0}
  td.n,td{text-align:left}
  td[data-l]::before{content:attr(data-l);display:block;font-size:10.5px;color:var(--mut)}
@@ -197,14 +210,18 @@ function render(){
   $('rekap').innerHTML = rows.length ? rows.map(r => {
     const low = isLow(r), pct = r.limit ? Math.min(100, Math.round(r.akhir / (r.limit * 3) * 100)) : (r.akhir > 0 ? 100 : 0);
     const kosong = !r.awal && !r.masuk && !r.keluar && !r.rusak && !r.akhir;
+    const mid = !low && r.limit !== null && r.awal > 0 && r.akhir <= r.awal * 0.4;
     const st = kosong ? '<span class="badge b-na">Barang Tidak Tersedia</span>'
       : r.limit === null ? '<span class="badge b-na">Tidak dipantau</span>'
-      : low ? '<span class="badge b-low">Harus segera di requestkan</span>' : '<span class="badge b-ok">Aman</span>';
-    return `<tr class="${low && !kosong ? 'low' : ''}"><td class="kode">${esc(r.kode)}</td><td class="nama"><b>${esc(r.nama)}</b></td>
+      : low ? '<span class="badge b-low">Harus segera di requestkan</span>'
+      : mid ? '<span class="badge b-warn">Stock Menipis</span>' : '<span class="badge b-ok">Aman</span>';
+    return `<tr class="${low && !kosong ? 'low' : mid ? 'mid' : ''}"><td class="kode">${esc(r.kode)}</td><td class="nama"><b>${esc(r.nama)}</b></td>
       <td class="n" data-l="Awal">${nf(r.awal)}</td><td class="n" data-l="Masuk">${nf(r.masuk)}</td><td class="n" data-l="Keluar">${nf(r.keluar)}</td><td class="n" data-l="Rusak">${nf(r.rusak)}</td>
       <td class="n akhir" data-l="Stok Akhir"><b>${nf(r.akhir)}</b></td>
       <td class="lvl"><div class="bar"><i data-w="${pct}"></i></div></td><td class="stat">${st}</td></tr>`;
-  }).join('') : '<tr><td colspan="9" class="empty">Tidak ada barang yang cocok.</td></tr>';
+  }).join('') : (onlyLow && !low.length
+      ? '<tr class="emptyrow"><td colspan="9" class="empty aman"><div class="thumb"><span>👍</span></div><div class="amantxt">BARANG AMAN</div><small>Tidak ada barang yang perlu di-request</small></td></tr>'
+      : '<tr class="emptyrow"><td colspan="9" class="empty">Tidak ada barang yang cocok.</td></tr>');
   requestAnimationFrame(() => requestAnimationFrame(() => document.querySelectorAll('.bar i').forEach(i => i.style.width = i.dataset.w + '%')));
 
   const by = {};
