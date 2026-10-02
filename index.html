@@ -207,7 +207,7 @@ function render(){
   d.rusak.forEach(r => { const k = r.ket || 'Belum ada keterangan'; by[k] = (by[k] || 0) + r.jumlah; });
   $('ket').innerHTML = Object.keys(by).map(k => `<div class="chip"><b>${nf(by[k])}</b> pcs<br><small>${esc(k)}</small></div>`).join('');
   $('rusak').innerHTML = d.rusak.length ? d.rusak.map(r =>
-    `<tr><td class="tgl${r.ret ? '' : ' solo'}" data-l="Tanggal Report Kerusakan">${tglH(r.tanggal)}</td><td class="kd" data-l="Kode">${esc(r.kode)}</td><td class="nama">${esc(r.nama)}</td><td class="n" data-l="Jumlah">${nf(r.jumlah)}</td><td class="ket" data-l="Keterangan">${esc(r.ket) || '-'}</td><td class="ret" data-l="Tanggal Return">${r.ret ? tglH(r.ret) : ''}</td></tr>`).join('')
+    `<tr><td class="tgl" data-l="Tanggal Report Kerusakan">${tglH(r.tanggal)}</td><td class="kd" data-l="Kode">${esc(r.kode)}</td><td class="nama">${esc(r.nama)}</td><td class="n" data-l="Jumlah">${nf(r.jumlah)}</td><td class="ket" data-l="Keterangan">${esc(r.ket) || '-'}</td><td class="ret" data-l="Tanggal Return">${r.ret ? tglH(r.ret) : '-'}</td></tr>`).join('')
     : '<tr><td colspan="6" class="empty">Belum ada barang rusak tercatat.</td></tr>';
   first = false;
 }
