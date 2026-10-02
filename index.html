@@ -71,7 +71,7 @@ tbody tr:hover{background:#F2F8FA}
  .wrap{overflow:visible;background:none;box-shadow:none}
  table,tbody,tr,td{display:block;min-width:0!important}
  thead{display:none}
- tbody tr{background:var(--card);border-radius:12px;box-shadow:0 3px 12px #12263a12;margin-bottom:10px;padding:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px 6px;border-top:0}
+ tbody tr{background:var(--card);border-radius:12px;box-shadow:0 3px 12px #12263a12;margin-bottom:10px;padding:12px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 6px;min-width:0;width:100%;border-top:0}
  tr.low{background:#FFF7F7;box-shadow:inset 4px 0 0 var(--warn),0 3px 12px #12263a12}
  tr.low td:first-child{box-shadow:none}
  td{border:0;padding:0}
@@ -87,8 +87,19 @@ tbody tr:hover{background:#F2F8FA}
  #t2 td:empty{display:none}
  td[data-l]::before{font-weight:400}
  td.tgl{font-size:14px}
- #t2 tbody tr{grid-template-columns:1fr 1fr}
- #t2 td.n,#t2 td.kd{grid-column:span 1}
+ html,body{overflow-x:hidden}
+ td{min-width:0;overflow-wrap:anywhere}
+ .hr{display:block}.cm{display:none}
+ #t2 tbody tr{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 10px;padding:11px 12px}
+ #t2 td{font-size:13px}
+ #t2 td[data-l]::before{font-size:10px}
+ #t2 td.tgl{grid-column:span 1;order:1;font-weight:600;font-size:13px}
+ #t2 td.tgl.solo{grid-column:1/-1}
+ #t2 td.ret{grid-column:span 1;order:2;font-weight:600}
+ #t2 td.kd{grid-column:span 1;order:3}
+ #t2 td.n{grid-column:span 1;order:4}
+ #t2 td.nama{grid-column:1/-1;order:5;margin-top:0;font-size:13px;font-weight:600}
+ #t2 td.ket{grid-column:1/-1;order:6}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -152,6 +163,10 @@ function tgl(s){
   if (isNaN(d)) return esc(s);
   return HARI[d.getDay()] + ', ' + d.getDate() + ' ' + BLN[d.getMonth()] + ' ' + d.getFullYear();
 }
+function tglH(s){
+  const t = tgl(s), i = t.indexOf(', ');
+  return i < 0 ? t : '<span class="hr">' + t.slice(0, i) + '</span><span class="cm">, </span>' + t.slice(i + 2);
+}
 const isLow = r => r.limit !== null && r.akhir <= r.limit;
 
 function countUp(el, to){
@@ -192,7 +207,7 @@ function render(){
   d.rusak.forEach(r => { const k = r.ket || 'Belum ada keterangan'; by[k] = (by[k] || 0) + r.jumlah; });
   $('ket').innerHTML = Object.keys(by).map(k => `<div class="chip"><b>${nf(by[k])}</b> pcs<br><small>${esc(k)}</small></div>`).join('');
   $('rusak').innerHTML = d.rusak.length ? d.rusak.map(r =>
-    `<tr><td class="tgl" data-l="Tanggal Report Kerusakan">${tgl(r.tanggal)}</td><td class="kd" data-l="Kode">${esc(r.kode)}</td><td class="nama">${esc(r.nama)}</td><td class="n" data-l="Jumlah">${nf(r.jumlah)}</td><td class="ket" data-l="Keterangan">${esc(r.ket) || '-'}</td><td class="ret" data-l="Tanggal Return">${r.ret ? tgl(r.ret) : ''}</td></tr>`).join('')
+    `<tr><td class="tgl${r.ret ? '' : ' solo'}" data-l="Tanggal Report Kerusakan">${tglH(r.tanggal)}</td><td class="kd" data-l="Kode">${esc(r.kode)}</td><td class="nama">${esc(r.nama)}</td><td class="n" data-l="Jumlah">${nf(r.jumlah)}</td><td class="ket" data-l="Keterangan">${esc(r.ket) || '-'}</td><td class="ret" data-l="Tanggal Return">${r.ret ? tglH(r.ret) : ''}</td></tr>`).join('')
     : '<tr><td colspan="6" class="empty">Belum ada barang rusak tercatat.</td></tr>';
   first = false;
 }
