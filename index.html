@@ -153,14 +153,18 @@ const nf = n => Number(n).toLocaleString('id-ID');
 const HARI = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
 const BLN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const BEN = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
-function tgl(s){
-  s = String(s || '').trim(); if (!s) return '-';
+function toDate(s){
+  s = String(s || '').trim(); if (!s) return null;
   let m, d;
   if (m = s.match(/^(\d{4})-(\d{2})-(\d{2})/)) d = new Date(+m[1], m[2] - 1, +m[3]);
   else if (m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/)) d = new Date(+m[3], m[2] - 1, +m[1]);
   else if (m = s.match(/^\w{3} (\w{3}) (\d{1,2}) (\d{4})/)) d = new Date(+m[3], BEN[m[1]], +m[2]);
   else d = new Date(s);
-  if (isNaN(d)) return esc(s);
+  return isNaN(d) ? null : d;
+}
+function tgl(s){
+  const d = toDate(s);
+  if (!d) return s ? esc(String(s).trim()) : '-';
   return HARI[d.getDay()] + ', ' + d.getDate() + ' ' + BLN[d.getMonth()] + ' ' + d.getFullYear();
 }
 function tglH(s){
@@ -206,7 +210,18 @@ function render(){
   const by = {};
   d.rusak.forEach(r => { const k = r.ket || 'Belum ada keterangan'; by[k] = (by[k] || 0) + r.jumlah; });
   $('ket').innerHTML = Object.keys(by).map(k => `<div class="chip"><b>${nf(by[k])}</b> pcs<br><small>${esc(k)}</small></div>`).join('');
-  $('rusak').innerHTML = d.rusak.length ? d.rusak.map(r =>
+  // Gabungkan: kode + keterangan + tanggal return sama => jumlah dijumlahkan, tanggal report diambil yang terakhir
+  const g = {};
+  d.rusak.forEach(r => {
+    const k = [r.kode, r.ket, r.ret].join('|'), x = g[k];
+    if (!x) { g[k] = Object.assign({}, r); return; }
+    x.jumlah += r.jumlah;
+    const a = toDate(x.tanggal), b = toDate(r.tanggal);
+    if (b && (!a || b > a)) x.tanggal = r.tanggal;
+    if (!x.nama && r.nama) x.nama = r.nama;
+  });
+  const list = Object.values(g).sort((p, q) => (toDate(p.tanggal) || 0) - (toDate(q.tanggal) || 0));
+  $('rusak').innerHTML = list.length ? list.map(r =>
     `<tr><td class="tgl" data-l="Tanggal Report Kerusakan">${tglH(r.tanggal)}</td><td class="kd" data-l="Kode">${esc(r.kode)}</td><td class="nama">${esc(r.nama)}</td><td class="n" data-l="Jumlah">${nf(r.jumlah)}</td><td class="ket" data-l="Keterangan">${esc(r.ket) || '-'}</td><td class="ret" data-l="Tanggal Return">${r.ret ? tglH(r.ret) : '-'}</td></tr>`).join('')
     : '<tr><td colspan="6" class="empty">Belum ada barang rusak tercatat.</td></tr>';
   first = false;
