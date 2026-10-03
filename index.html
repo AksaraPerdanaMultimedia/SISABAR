@@ -64,12 +64,34 @@ tr.mid td:first-child{box-shadow:inset 4px 0 0 #F2B01E}
 .b-warn{color:#5A3B00;font-size:11.5px;letter-spacing:.2px;white-space:nowrap;background:linear-gradient(110deg,#F2B01E 30%,#FFE29A 50%,#F2B01E 70%);background-size:240% 100%;animation:sheen 3.4s ease-in-out infinite,breatheY 2.4s ease-in-out infinite}
 @keyframes breatheY{0%,100%{opacity:1;box-shadow:0 0 0 0 #f2b01e00}50%{opacity:.78;box-shadow:0 0 0 5px #f2b01e33}}
 .aman{padding:34px 12px!important}
-.thumb{display:inline-block;width:84px;height:84px;line-height:84px;font-size:44px;border-radius:50%;background:var(--okbg);animation:ring 2.4s ease-out infinite}
-.thumb span{display:inline-block;animation:bob 2.2s ease-in-out infinite}
+.thumb{display:inline-block;width:132px;height:132px;border-radius:50%;background:var(--okbg);animation:ring 2.4s ease-out infinite}
+.peng{width:118px;height:128px;margin-top:2px;overflow:visible;animation:hop 2.2s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes hop{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-6px) rotate(2deg)}}
+.wave{transform-origin:90px 64px;animation:wave 1.3s ease-in-out infinite}
+@keyframes wave{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(9deg)}}
+.blink{transform-box:fill-box;transform-origin:center;animation:blink 4.2s infinite}
+@keyframes blink{0%,90%,100%{transform:scaleY(1)}94%{transform:scaleY(.08)}}
+.kpi{cursor:pointer;transition:transform .2s,box-shadow .2s}
+.kpi:hover{transform:translateY(-3px);box-shadow:0 10px 26px #12263a22}
+.kpi span::after{content:' \203A';color:var(--teal);font-weight:700}
+section{scroll-margin-top:10px}
+.banner a{color:inherit;font-weight:600;text-decoration:underline dotted;cursor:pointer}
+.banner small{color:var(--mut)}
+tr.flash{animation:flashrow 2.4s ease}
+@keyframes flashrow{0%,100%{background-color:transparent}20%,65%{background-color:#C9EEE9}}
+
 @keyframes ring{0%{box-shadow:0 0 0 0 #1f9d6b55}70%,100%{box-shadow:0 0 0 20px #1f9d6b00}}
 @keyframes bob{0%,100%{transform:translateY(0) rotate(-8deg) scale(1)}50%{transform:translateY(-7px) rotate(8deg) scale(1.12)}}
-.amantxt{margin-top:10px;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px;letter-spacing:2px;color:var(--ok);background:linear-gradient(110deg,#1F9D6B 30%,#6BE3B0 50%,#1F9D6B 70%);background-size:240% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:sheen 3.4s ease-in-out infinite}
+.amantxt{margin-top:10px;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:18px;letter-spacing:.4px;min-height:1.4em;color:var(--ok);background:linear-gradient(110deg,#1F9D6B 30%,#6BE3B0 50%,#1F9D6B 70%);background-size:240% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:sheen 3.4s ease-in-out infinite}
 .aman small{display:block;margin-top:2px}
+.amantxt::after{content:'';display:inline-block;width:2px;height:1em;margin-left:2px;vertical-align:-2px;background:var(--ok);-webkit-text-fill-color:initial;animation:caret .8s steps(1) infinite}
+@keyframes caret{50%{opacity:0}}
+.pesan{margin-top:10px;padding-top:10px;border-top:1px dashed #F3B9BB;font-weight:600;color:var(--warn);animation:slidein .6s ease both}
+.pesan b{color:var(--teal)}
+.aman-msg{display:inline-block;margin-top:14px;padding:8px 16px;border:1px solid #BFE6D5;border-radius:14px 14px 14px 4px;background:#fff;color:var(--ink);font-size:15px;text-align:left}
+.th{visibility:hidden}
+.tv.typing::after{content:'';display:inline-block;width:2px;height:1em;margin-left:2px;vertical-align:-2px;background:currentColor;animation:caret .7s steps(1) infinite}
+@keyframes slidein{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 @media(max-width:720px){
  tbody tr.emptyrow{display:block;padding:0}
  tr.mid{box-shadow:inset 4px 0 0 #F2B01E,0 3px 12px #12263a12}
@@ -124,14 +146,14 @@ tr.mid td:first-child{box-shadow:inset 4px 0 0 #F2B01E}
 </div></header>
 <main>
   <div class="kpis">
-    <div class="kpi"><div class="big" id="k1">0</div><span>Jenis barang dipantau</span></div>
-    <div class="kpi alert" id="kcard"><div class="big" id="k2">0</div><span>Perlu segera di-request</span></div>
-    <div class="kpi"><div class="big" id="k3">0</div><span>Total barang rusak</span></div>
+    <div class="kpi" id="kc1" role="button" tabindex="0"><div class="big" id="k1">0</div><span>Jenis barang dipantau</span></div>
+    <div class="kpi alert" id="kcard" role="button" tabindex="0"><div class="big" id="k2">0</div><span>Perlu segera di-request</span></div>
+    <div class="kpi" id="kc3" role="button" tabindex="0"><div class="big" id="k3">0</div><span>Total barang rusak</span></div>
   </div>
   <div id="err">Data belum bisa dimuat. Cek koneksi internet atau URL Apps Script di index.html; dashboard mencoba lagi otomatis.</div>
   <div id="banner"></div>
 
-  <section>
+  <section id="sec-rekap">
     <h2>Rekap Barang</h2>
     <div class="tools">
       <input id="q" type="search" placeholder="Cari kode / nama barang…" aria-label="Cari barang">
@@ -144,7 +166,7 @@ tr.mid td:first-child{box-shadow:inset 4px 0 0 #F2B01E}
     </table></div>
   </section>
 
-  <section>
+  <section id="sec-rusak">
     <h2>Barang Rusak</h2>
     <div class="chips" id="ket"></div>
     <div class="wrap"><table id="t2" style="min-width:760px">
@@ -184,6 +206,7 @@ function tglH(s){
   const t = tgl(s), i = t.indexOf(', ');
   return i < 0 ? t : '<span class="hr">' + t.slice(0, i) + '</span><span class="cm">, </span>' + t.slice(i + 2);
 }
+const PENGUIN = '<svg class="peng" viewBox="0 0 120 130" xmlns="http://www.w3.org/2000/svg" aria-label="Penguin mengacungkan jempol"><ellipse cx="60" cy="124" rx="30" ry="4.5" fill="#000" opacity=".12"/><ellipse cx="45" cy="119" rx="12" ry="5" fill="#F6A13A"/><ellipse cx="75" cy="119" rx="12" ry="5" fill="#F6A13A"/><ellipse cx="60" cy="72" rx="38" ry="46" fill="#1B2B3F"/><ellipse cx="60" cy="89" rx="24" ry="30" fill="#fff"/><ellipse cx="24" cy="80" rx="8" ry="22" transform="rotate(12 24 80)" fill="#1B2B3F"/><g class="wave"><ellipse cx="102" cy="54" rx="8" ry="20" transform="rotate(28 102 54)" fill="#24384F"/><ellipse cx="112" cy="31" rx="4.5" ry="9" transform="rotate(10 112 31)" fill="#24384F"/></g><g class="blink"><circle cx="47" cy="43" r="8.5" fill="#fff"/><circle cx="73" cy="43" r="8.5" fill="#fff"/><circle cx="48.5" cy="44" r="4.2" fill="#12263A"/><circle cx="71.5" cy="44" r="4.2" fill="#12263A"/><circle cx="50" cy="42" r="1.3" fill="#fff"/><circle cx="73" cy="42" r="1.3" fill="#fff"/></g><circle cx="37" cy="57" r="5" fill="#FF9AA2" opacity=".6"/><circle cx="83" cy="57" r="5" fill="#FF9AA2" opacity=".6"/><polygon points="52,53 68,53 60,65" fill="#F6A13A"/></svg>';
 const isLow = r => r.limit !== null && r.akhir <= r.limit;
 
 function countUp(el, to){
@@ -201,8 +224,8 @@ function render(){
   $('upd').textContent = 'Diperbarui ' + tgl(d.updated);
 
   $('banner').innerHTML = low.length
-    ? '<div class="banner"><b>Harus segera di requestkan</b><ul>' + low.map(r =>
-        `<li>${esc(r.nama)}: sisa <b>${nf(r.akhir)}</b></li>`).join('') + '</ul></div>'
+    ? '<div class="banner"><b>Harus segera di requestkan</b> <small>· ketuk nama barang untuk melihat</small><ul>' + low.map(r =>
+        `<li><a data-k="${esc(r.kode)}" role="button" tabindex="0">${esc(r.nama)}</a>: sisa <b>${nf(r.akhir)}</b></li>`).join('') + '</ul><div class="pesan"><b>Pak Daryoto :</b> <span class="typed" data-t="Ayo segera requestkan ya om aziz"></span></div></div>'
     : '';
 
   const q = $('q').value.trim().toLowerCase();
@@ -215,15 +238,16 @@ function render(){
       : r.limit === null ? '<span class="badge b-na">Tidak dipantau</span>'
       : low ? '<span class="badge b-low">Harus segera di requestkan</span>'
       : mid ? '<span class="badge b-warn">Stock Menipis</span>' : '<span class="badge b-ok">Aman</span>';
-    return `<tr class="${low && !kosong ? 'low' : mid ? 'mid' : ''}"><td class="kode">${esc(r.kode)}</td><td class="nama"><b>${esc(r.nama)}</b></td>
+    return `<tr data-kode="${esc(r.kode)}" class="${low && !kosong ? 'low' : mid ? 'mid' : ''}"><td class="kode">${esc(r.kode)}</td><td class="nama"><b>${esc(r.nama)}</b></td>
       <td class="n" data-l="Awal">${nf(r.awal)}</td><td class="n" data-l="Masuk">${nf(r.masuk)}</td><td class="n" data-l="Keluar">${nf(r.keluar)}</td><td class="n" data-l="Rusak">${nf(r.rusak)}</td>
       <td class="n akhir" data-l="Stok Akhir"><b>${nf(r.akhir)}</b></td>
       <td class="lvl"><div class="bar"><i data-w="${pct}"></i></div></td><td class="stat">${st}</td></tr>`;
   }).join('') : (onlyLow && !low.length
-      ? '<tr class="emptyrow"><td colspan="9" class="empty aman"><div class="thumb"><span>👍</span></div><div class="amantxt">BARANG AMAN</div><small>Tidak ada barang yang perlu di-request</small></td></tr>'
+      ? '<tr class="emptyrow"><td colspan="9" class="empty aman"><div class="thumb">' + PENGUIN + '</div><div class="pesan aman-msg"><b>Pak Daryoto :</b> <span class="typed" data-t="Material aman yaaa om aziz"></span></div></td></tr>'
       : '<tr class="emptyrow"><td colspan="9" class="empty">Tidak ada barang yang cocok.</td></tr>');
   requestAnimationFrame(() => requestAnimationFrame(() => document.querySelectorAll('.bar i').forEach(i => i.style.width = i.dataset.w + '%')));
 
+  typeAll();
   const by = {};
   d.rusak.forEach(r => { const k = r.ket || 'Belum ada keterangan'; by[k] = (by[k] || 0) + r.jumlah; });
   $('ket').innerHTML = Object.keys(by).map(k => `<div class="chip"><b>${nf(by[k])}</b> pcs<br><small>${esc(k)}</small></div>`).join('');
@@ -255,8 +279,44 @@ async function load(){
 }
 
 $('q').oninput = () => DATA && render();
-$('fAll').onclick = () => { onlyLow = false; $('fAll').className = 'act'; $('fLow').className = ''; DATA && render(); };
-$('fLow').onclick = () => { onlyLow = true; $('fLow').className = 'act'; $('fAll').className = ''; DATA && render(); };
+function setFilter(v){ onlyLow = v; $('fAll').className = v ? '' : 'act'; $('fLow').className = v ? 'act' : ''; DATA && render(); }
+$('fAll').onclick = () => setFilter(false);
+$('fLow').onclick = () => setFilter(true);
+const go = id => $(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+[['kc1', () => { setFilter(false); go('sec-rekap'); }],
+ ['kcard', () => { setFilter(true); go('sec-rekap'); }],
+ ['kc3', () => go('sec-rusak')]].forEach(([id, fn]) => {
+  const el = $(id); el.onclick = fn;
+  el.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); } };
+});
+const doneT = {};
+function typeAll(){
+  const seen = new Set(), reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  document.querySelectorAll('.typed').forEach(el => {
+    const t = el.dataset.t; seen.add(t);
+    el.innerHTML = '<span class="tv"></span><span class="th"></span>';
+    const tv = el.firstChild, th = el.lastChild;
+    if (doneT[t] || reduce) { tv.textContent = t; doneT[t] = true; return; }
+    th.textContent = t; tv.classList.add('typing');
+    let n = 0;
+    (function step(){
+      if (!el.isConnected) return;
+      n++; tv.textContent = t.slice(0, n); th.textContent = t.slice(n);
+      if (n < t.length) setTimeout(step, 60);
+      else { tv.classList.remove('typing'); doneT[t] = true; }
+    })();
+  });
+  Object.keys(doneT).forEach(k => { if (!seen.has(k)) delete doneT[k]; });
+}
+function lihatBarang(kode){
+  $('q').value = ''; setFilter(false);
+  const tr = document.querySelector('tr[data-kode="' + kode + '"]');
+  if (!tr) return;
+  tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  tr.classList.add('flash'); setTimeout(() => tr.classList.remove('flash'), 2400);
+}
+$('banner').onclick = e => { const a = e.target.closest('[data-k]'); if (a) { e.preventDefault(); lihatBarang(a.dataset.k); } };
+$('banner').onkeydown = e => { const a = e.target.closest('[data-k]'); if (a && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); lihatBarang(a.dataset.k); } };
 setInterval(load, REFRESH_MS);
 setInterval(() => { left = Math.max(0, left - 1); $('cd').textContent = '· update berikutnya ' + Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0'); }, 1000);
 load();
