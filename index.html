@@ -59,6 +59,10 @@ tbody tr:hover{background:#F2F8FA}
 .chip b{font-family:'Bricolage Grotesque';font-size:20px}
 .empty{padding:28px;text-align:center;color:var(--mut)}
 #err{display:none;margin-top:14px;background:#FFF4DB;border:1px solid #F0D58A;border-radius:10px;padding:10px 14px}
+.kpi.warn{border-top-color:#F2B01E;background:linear-gradient(180deg,#FFF7DD,#fff 70%)}
+.kpi.warn .big{color:#B7791F}
+.kpi.warn.on{animation:pulseY 2s infinite}
+@keyframes pulseY{50%{box-shadow:0 0 0 6px #f2b01e33,0 6px 20px #12263a14}}
 tr.mid td:first-child{box-shadow:inset 4px 0 0 #F2B01E}
 .mid .bar i{background:#F2B01E}
 .b-warn{color:#5A3B00;font-size:11.5px;letter-spacing:.2px;white-space:nowrap;background:linear-gradient(110deg,#F2B01E 30%,#FFE29A 50%,#F2B01E 70%);background-size:240% 100%;animation:sheen 3.4s ease-in-out infinite,breatheY 2.4s ease-in-out infinite}
@@ -149,6 +153,7 @@ tr.flash{animation:flashrow 2.4s ease}
     <div class="kpi" id="kc1" role="button" tabindex="0"><div class="big" id="k1">0</div><span>Jenis barang dipantau</span></div>
     <div class="kpi alert" id="kcard" role="button" tabindex="0"><div class="big" id="k2">0</div><span>Perlu segera di-request</span></div>
     <div class="kpi" id="kc3" role="button" tabindex="0"><div class="big" id="k3">0</div><span>Total barang rusak</span></div>
+    <div class="kpi warn" id="kc4" role="button" tabindex="0"><div class="big" id="k4">0</div><span>Stock barang menipis</span></div>
   </div>
   <div id="err">Data belum bisa dimuat. Cek koneksi internet atau URL Apps Script di index.html; dashboard mencoba lagi otomatis.</div>
   <div id="banner"></div>
@@ -159,6 +164,7 @@ tr.flash{animation:flashrow 2.4s ease}
       <input id="q" type="search" placeholder="Cari kode / nama barang…" aria-label="Cari barang">
       <button id="fAll" class="act">Semua</button>
       <button id="fLow">Perlu request</button>
+      <button id="fMid">Stock menipis</button>
     </div>
     <div class="wrap"><table id="t1">
       <thead><tr><th>Kode</th><th>Nama Barang</th><th class="n">Stok Awal</th><th class="n">Masuk</th><th class="n">Keluar</th><th class="n">Rusak</th><th class="n">Stok Akhir</th><th>Level stok</th><th>Status</th></tr></thead>
@@ -181,7 +187,7 @@ tr.flash{animation:flashrow 2.4s ease}
 const API_URL = 'https://script.google.com/macros/s/AKfycbwNM1zLFGgWvIy4PlUCuox2deSOhc8aBWOKy-mClFxLBLte4ATTe4Sz_jbtu704YZ7X/exec';
 const REFRESH_MS = 120000; // 2 menit
 
-let DATA = null, onlyLow = false, first = true, left = REFRESH_MS / 1000;
+let DATA = null, onlyLow = false, onlyMid = false, first = true, left = REFRESH_MS / 1000;
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const nf = n => Number(n).toLocaleString('id-ID');
@@ -208,6 +214,7 @@ function tglH(s){
 }
 const PENGUIN = '<svg class="peng" viewBox="0 0 120 130" xmlns="http://www.w3.org/2000/svg" aria-label="Penguin mengacungkan jempol"><ellipse cx="60" cy="124" rx="30" ry="4.5" fill="#000" opacity=".12"/><ellipse cx="45" cy="119" rx="12" ry="5" fill="#F6A13A"/><ellipse cx="75" cy="119" rx="12" ry="5" fill="#F6A13A"/><ellipse cx="60" cy="72" rx="38" ry="46" fill="#1B2B3F"/><ellipse cx="60" cy="89" rx="24" ry="30" fill="#fff"/><ellipse cx="24" cy="80" rx="8" ry="22" transform="rotate(12 24 80)" fill="#1B2B3F"/><g class="wave"><ellipse cx="102" cy="54" rx="8" ry="20" transform="rotate(28 102 54)" fill="#24384F"/><ellipse cx="112" cy="31" rx="4.5" ry="9" transform="rotate(10 112 31)" fill="#24384F"/></g><g class="blink"><circle cx="47" cy="43" r="8.5" fill="#fff"/><circle cx="73" cy="43" r="8.5" fill="#fff"/><circle cx="48.5" cy="44" r="4.2" fill="#12263A"/><circle cx="71.5" cy="44" r="4.2" fill="#12263A"/><circle cx="50" cy="42" r="1.3" fill="#fff"/><circle cx="73" cy="42" r="1.3" fill="#fff"/></g><circle cx="37" cy="57" r="5" fill="#FF9AA2" opacity=".6"/><circle cx="83" cy="57" r="5" fill="#FF9AA2" opacity=".6"/><polygon points="52,53 68,53 60,65" fill="#F6A13A"/></svg>';
 const isLow = r => r.limit !== null && r.akhir <= r.limit;
+const isMid = r => !isLow(r) && r.limit !== null && r.awal > 0 && r.akhir <= r.awal * 0.4;
 
 function countUp(el, to){
   if (!first || matchMedia('(prefers-reduced-motion:reduce)').matches){ el.textContent = nf(to); return; }
@@ -219,6 +226,9 @@ function render(){
   const d = DATA, low = d.rekap.filter(isLow);
   countUp($('k1'), d.rekap.filter(r => r.limit !== null).length);
   countUp($('k2'), low.length);
+  const mids = d.rekap.filter(isMid);
+  countUp($('k4'), mids.length);
+  $('kc4').classList.toggle('on', mids.length > 0);
   countUp($('k3'), d.rusak.reduce((a, r) => a + r.jumlah, 0));
   $('kcard').classList.toggle('on', low.length > 0);
   $('upd').textContent = 'Diperbarui ' + tgl(d.updated);
@@ -229,7 +239,7 @@ function render(){
     : '';
 
   const q = $('q').value.trim().toLowerCase();
-  const rows = d.rekap.filter(r => (!onlyLow || isLow(r)) && (r.kode + ' ' + r.nama).toLowerCase().includes(q));
+  const rows = d.rekap.filter(r => (!onlyLow || isLow(r)) && (!onlyMid || isMid(r)) && (r.kode + ' ' + r.nama).toLowerCase().includes(q));
   $('rekap').innerHTML = rows.length ? rows.map(r => {
     const low = isLow(r), pct = r.limit ? Math.min(100, Math.round(r.akhir / (r.limit * 3) * 100)) : (r.akhir > 0 ? 100 : 0);
     const kosong = !r.awal && !r.masuk && !r.keluar && !r.rusak && !r.akhir;
@@ -279,13 +289,15 @@ async function load(){
 }
 
 $('q').oninput = () => DATA && render();
-function setFilter(v){ onlyLow = v; $('fAll').className = v ? '' : 'act'; $('fLow').className = v ? 'act' : ''; DATA && render(); }
+function setFilter(v){ onlyLow = v === true; onlyMid = v === 'mid'; $('fAll').className = (onlyLow || onlyMid) ? '' : 'act'; $('fLow').className = onlyLow ? 'act' : ''; $('fMid').className = onlyMid ? 'act' : ''; DATA && render(); }
 $('fAll').onclick = () => setFilter(false);
 $('fLow').onclick = () => setFilter(true);
+$('fMid').onclick = () => setFilter('mid');
 const go = id => $(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
 [['kc1', () => { setFilter(false); go('sec-rekap'); }],
  ['kcard', () => { setFilter(true); go('sec-rekap'); }],
- ['kc3', () => go('sec-rusak')]].forEach(([id, fn]) => {
+ ['kc3', () => go('sec-rusak')],
+ ['kc4', () => { setFilter('mid'); go('sec-rekap'); }]].forEach(([id, fn]) => {
   const el = $(id); el.onclick = fn;
   el.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); } };
 });
