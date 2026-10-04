@@ -75,7 +75,7 @@ tr.mid td:first-child{box-shadow:inset 4px 0 0 #F2B01E}
 .b-warn{color:#5A3B00;font-size:11.5px;letter-spacing:.2px;white-space:nowrap;background:linear-gradient(110deg,#F2B01E 30%,#FFE29A 50%,#F2B01E 70%);background-size:240% 100%;animation:sheen 3.4s ease-in-out infinite,breatheY 2.4s ease-in-out infinite}
 @keyframes breatheY{0%,100%{opacity:1;box-shadow:0 0 0 0 #f2b01e00}50%{opacity:.78;box-shadow:0 0 0 5px #f2b01e33}}
 .aman{padding:34px 12px!important}
-.thumb{display:inline-block;width:132px;height:132px;border-radius:50%;background:var(--okbg);animation:ring 2.4s ease-out infinite}
+.thumb{display:block;margin:0 auto;width:132px;height:132px;border-radius:50%;background:var(--okbg);animation:ring 2.4s ease-out infinite}
 .peng{width:118px;height:128px;margin-top:2px;overflow:visible;animation:hop 2.2s ease-in-out infinite;transform-origin:50% 100%}
 @keyframes hop{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-6px) rotate(2deg)}}
 .wave{transform-origin:90px 64px;animation:wave 1.3s ease-in-out infinite}
@@ -156,7 +156,6 @@ tr.flash{animation:flashrow 2.4s ease}
  #t2 td.nama{grid-column:1/-1;order:5;margin-top:0;font-size:13px;font-weight:600}
  #t2 td.ket{grid-column:1/-1;order:6}
 }
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -234,7 +233,7 @@ const isLow = r => r.limit !== null && r.akhir <= r.limit;
 const isMid = r => !isLow(r) && r.limit !== null && r.awal > 0 && r.akhir <= r.awal * 0.4;
 
 function countUp(el, to){
-  if (!first || matchMedia('(prefers-reduced-motion:reduce)').matches){ el.textContent = nf(to); return; }
+  if (!first){ el.textContent = nf(to); return; }
   const t0 = performance.now();
   (function s(t){ const p = Math.min((t - t0) / 900, 1); el.textContent = nf(Math.round(to * (1 - Math.pow(1 - p, 3)))); if (p < 1) requestAnimationFrame(s); })(t0);
 }
@@ -319,7 +318,7 @@ const go = id => $(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 const doneT = {};
 function typeAll(){
-  const seen = new Set(), reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const seen = new Set(), reduce = false;
   document.querySelectorAll('.typed').forEach(el => {
     const t = el.dataset.t; seen.add(t);
     el.innerHTML = '<span class="tv"></span><span class="th"></span>';
