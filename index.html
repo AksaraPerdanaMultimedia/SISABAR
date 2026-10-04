@@ -17,6 +17,8 @@ header{background:linear-gradient(120deg,#0B3C49,#0E7C86 60%,#2BB3A3);color:#fff
 @media(min-width:721px){
  .top{position:relative}
  .brand{flex:1 1 100%}
+ .brand h1{font-size:clamp(28px,3.2vw,42px);text-align:center}
+ .brand .sub{font-size:15.5px;text-align:center}
  .live{position:absolute;top:0;right:clamp(16px,4vw,48px)}
 }
 .brand h1{grid-column:2;grid-row:1;align-self:end}
@@ -88,6 +90,10 @@ tr.mid td:first-child{box-shadow:inset 4px 0 0 #F2B01E}
 .blink{transform-box:fill-box;transform-origin:center;animation:blink 4.2s infinite}
 @keyframes blink{0%,90%,100%{transform:scaleY(1)}94%{transform:scaleY(.08)}}
 .hide{display:none!important}
+.rin{animation:rowin .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:var(--d,0ms)}
+@keyframes rowin{from{opacity:0;transform:translateX(-28px) scale(.97)}60%{opacity:1}to{opacity:1;transform:none}}
+.chip.rin{animation-name:chipin}
+@keyframes chipin{from{opacity:0;transform:translateY(14px) scale(.9)}to{opacity:1;transform:none}}
 #sec-rusak{margin-top:0}
 #sec-rusak h2{display:none}
 .tech{display:block;margin:2px auto 0;width:118px;height:128px;overflow:visible;transform-origin:50% 100%;animation:tech-hop 3s ease-in-out infinite}
@@ -221,6 +227,7 @@ tr.flash{animation:flashrow 2.4s ease}
 const API_URL = 'https://script.google.com/macros/s/AKfycbwNM1zLFGgWvIy4PlUCuox2deSOhc8aBWOKy-mClFxLBLte4ATTe4Sz_jbtu704YZ7X/exec';
 const REFRESH_MS = 120000; // 2 menit
 
+let animRows = true, barT, entMs = 0;
 let DATA = null, onlyLow = false, onlyMid = false, first = true, left = REFRESH_MS / 1000;
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -289,8 +296,17 @@ function render(){
   }).join('') : (onlyLow && !low.length
       ? '<tr class="emptyrow"><td colspan="9" class="empty aman"><div class="thumb">' + PENGUIN + '</div><div class="pesan aman-msg"><b>Pak Daryoto :</b> <span class="typed" data-t="Material aman yaaa om aziz"></span></div></td></tr>'
       : '<tr class="emptyrow"><td colspan="9" class="empty">Tidak ada barang yang cocok.</td></tr>');
-  requestAnimationFrame(() => requestAnimationFrame(() => document.querySelectorAll('.bar i').forEach(i => i.style.width = i.dataset.w + '%')));
+  entMs = animRows ? rows.length * 70 + 550 : 0;
+  if (animRows) document.querySelectorAll('#rekap tr').forEach((tr, i) => { tr.classList.add('rin'); tr.style.setProperty('--d', i * 70 + 'ms'); });
+  clearTimeout(barT);
+  barT = setTimeout(() => requestAnimationFrame(() => requestAnimationFrame(() =>
+    document.querySelectorAll('.bar i').forEach(i => i.style.width = i.dataset.w + '%'))), entMs);
 
+  if (animRows) {
+    document.querySelectorAll('#rusak tr').forEach((tr, i) => { tr.classList.add('rin'); tr.style.setProperty('--d', i * 70 + 'ms'); });
+    document.querySelectorAll('#ket .chip').forEach((c, i) => { c.classList.add('rin'); c.style.setProperty('--d', i * 70 + 'ms'); });
+  }
+  animRows = false;
   typeAll();
   const by = {};
   d.rusak.forEach(r => { const k = r.ket || 'Belum ada keterangan'; by[k] = (by[k] || 0) + r.jumlah; });
@@ -325,6 +341,7 @@ async function load(){
 $('q').oninput = () => DATA && render();
 let onlyRusak = false;
 function setFilter(v){
+  animRows = true;
   onlyLow = v === true; onlyMid = false; onlyRusak = v === 'rusak';
   const semua = !onlyLow && !onlyRusak;
   $('fAll').className = semua ? 'act' : ''; $('fLow').className = onlyLow ? 'act' : '';
@@ -341,7 +358,7 @@ function sorotMenipis(){
   const rows = Array.from(document.querySelectorAll('#rekap tr.mid'));
   if (!rows.length) { go('sec-rekap'); return; }
   rows[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-  rows.forEach(tr => { tr.classList.add('flash'); setTimeout(() => tr.classList.remove('flash'), 2400); });
+  setTimeout(() => rows.forEach(tr => { tr.classList.add('flash'); setTimeout(() => tr.classList.remove('flash'), 2400); }), entMs);
 }
 $('fAll').onclick = () => setFilter(false);
 $('fLow').onclick = () => setFilter(true);
@@ -378,7 +395,7 @@ function lihatBarang(kode){
   const tr = document.querySelector('tr[data-kode="' + kode + '"]');
   if (!tr) return;
   tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  tr.classList.add('flash'); setTimeout(() => tr.classList.remove('flash'), 2400);
+  setTimeout(() => { tr.classList.add('flash'); setTimeout(() => tr.classList.remove('flash'), 2400); }, entMs);
 }
 $('banner').onclick = e => { const a = e.target.closest('[data-k]'); if (a) { e.preventDefault(); lihatBarang(a.dataset.k); } };
 $('banner').onkeydown = e => { const a = e.target.closest('[data-k]'); if (a && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); lihatBarang(a.dataset.k); } };
