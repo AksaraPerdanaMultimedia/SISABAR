@@ -11,11 +11,11 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 Figtree,system-ui,sans-serif}
 h1,h2,.big{font-family:'Bricolage Grotesque',sans-serif}
-header{background:linear-gradient(120deg,#0B3C49,#0E7C86 60%,#2BB3A3);color:#fff;padding:22px clamp(16px,4vw,48px)}
+header{background:linear-gradient(120deg,#0B3C49,#0E7C86 60%,#2BB3A3);color:#fff;padding:26px 0 76px}
 .brand{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .logo{background:#fff;border-radius:16px;padding:8px 16px;box-shadow:0 6px 18px #0b3c4944;animation:slidein .7s ease both}
 .logo img{display:block;height:46px;width:auto}
-.top{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center}
+.top{width:min(1280px,100%);margin:0 auto;padding:0 clamp(16px,4vw,48px);display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center}
 h1{margin:0;font-size:clamp(22px,4vw,34px);font-weight:800}
 .sub{opacity:.85;margin:2px 0 0}
 .live{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.14);padding:8px 14px;border-radius:99px;font-size:13px}
@@ -103,7 +103,8 @@ tr.flash{animation:flashrow 2.4s ease}
  tbody tr.emptyrow{display:block;padding:0}
  tr.mid{box-shadow:inset 4px 0 0 #F2B01E,0 3px 12px #12263a12}
  body{font-size:13px}
- header{padding:16px 14px 52px}
+ header{padding:16px 0 56px}
+ .top{padding:0 12px}
  .brand{gap:10px}
  .logo{padding:6px 12px}
  .logo img{height:36px}
