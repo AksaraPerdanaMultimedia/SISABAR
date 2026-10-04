@@ -82,6 +82,16 @@ tr.mid td:first-child{box-shadow:inset 4px 0 0 #F2B01E}
 @keyframes wave{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(9deg)}}
 .blink{transform-box:fill-box;transform-origin:center;animation:blink 4.2s infinite}
 @keyframes blink{0%,90%,100%{transform:scaleY(1)}94%{transform:scaleY(.08)}}
+.tech{display:block;margin:2px auto 0;width:118px;height:128px;overflow:visible;transform-origin:50% 100%;animation:tech-hop 3s ease-in-out infinite}
+@keyframes tech-hop{0%,40%,100%{transform:translateY(0)}10%{transform:translateY(-10px)}20%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+.twave{transform-origin:90px 64px;animation:tech-wave 3s ease-in-out infinite}
+@keyframes tech-wave{0%,40%,100%{transform:rotate(0)}8%{transform:rotate(-28deg)}16%{transform:rotate(16deg)}24%{transform:rotate(-28deg)}32%{transform:rotate(16deg)}}
+.hat{transform-origin:60px 34px;animation:tech-hat 3s ease-in-out infinite}
+@keyframes tech-hat{0%,28%,100%{transform:translateY(0) rotate(0)}10%{transform:translateY(-3px) rotate(-7deg)}20%{transform:translateY(-1px) rotate(4deg)}}
+.tblink{transform-box:fill-box;transform-origin:center;animation:tech-blink 3s infinite}
+@keyframes tech-blink{0%,60%,70%,100%{transform:scaleY(1)}65%{transform:scaleY(.08)}}
+.info-rusak{margin-top:12px;font-size:15px}
+.info-rusak b{display:block;color:var(--ink)}
 .kpi{cursor:pointer;transition:transform .2s,box-shadow .2s}
 .kpi:hover{transform:translateY(-3px);box-shadow:0 10px 26px #12263a22}
 .kpi span::after{content:' \203A';color:var(--teal);font-weight:700}
@@ -229,6 +239,7 @@ function tglH(s){
   return i < 0 ? t : '<span class="hr">' + t.slice(0, i) + '</span><span class="cm">, </span>' + t.slice(i + 2);
 }
 const PENGUIN = '<svg class="peng" viewBox="0 0 120 130" xmlns="http://www.w3.org/2000/svg" aria-label="Penguin mengacungkan jempol"><ellipse cx="60" cy="124" rx="30" ry="4.5" fill="#000" opacity=".12"/><ellipse cx="45" cy="119" rx="12" ry="5" fill="#F6A13A"/><ellipse cx="75" cy="119" rx="12" ry="5" fill="#F6A13A"/><ellipse cx="60" cy="72" rx="38" ry="46" fill="#1B2B3F"/><ellipse cx="60" cy="89" rx="24" ry="30" fill="#fff"/><ellipse cx="24" cy="80" rx="8" ry="22" transform="rotate(12 24 80)" fill="#1B2B3F"/><g class="wave"><ellipse cx="102" cy="54" rx="8" ry="20" transform="rotate(28 102 54)" fill="#24384F"/><ellipse cx="112" cy="31" rx="4.5" ry="9" transform="rotate(10 112 31)" fill="#24384F"/></g><g class="blink"><circle cx="47" cy="43" r="8.5" fill="#fff"/><circle cx="73" cy="43" r="8.5" fill="#fff"/><circle cx="48.5" cy="44" r="4.2" fill="#12263A"/><circle cx="71.5" cy="44" r="4.2" fill="#12263A"/><circle cx="50" cy="42" r="1.3" fill="#fff"/><circle cx="73" cy="42" r="1.3" fill="#fff"/></g><circle cx="37" cy="57" r="5" fill="#FF9AA2" opacity=".6"/><circle cx="83" cy="57" r="5" fill="#FF9AA2" opacity=".6"/><polygon points="52,53 68,53 60,65" fill="#F6A13A"/></svg>';
+const TECH = '<svg class="tech" viewBox="0 0 120 130" xmlns="http://www.w3.org/2000/svg" aria-label="Penguin teknisi"><ellipse cx="60" cy="124" rx="30" ry="4.5" fill="#000" opacity=".12"/><ellipse cx="45" cy="119" rx="12" ry="5" fill="#F6A13A"/><ellipse cx="75" cy="119" rx="12" ry="5" fill="#F6A13A"/><ellipse cx="60" cy="72" rx="38" ry="46" fill="#1B2B3F"/><ellipse cx="60" cy="89" rx="24" ry="30" fill="#fff"/><ellipse cx="24" cy="80" rx="8" ry="22" transform="rotate(12 24 80)" fill="#1B2B3F"/><path d="M38,64 L54,64 L60,80 L66,64 L82,64 L84,108 Q60,118 36,108 Z" fill="#FF8A1F"/><rect x="37" y="92" width="46" height="5" fill="#FFF3B0"/><rect x="37" y="102" width="46" height="4" fill="#FFF3B0"/><g class="twave"><ellipse cx="102" cy="54" rx="8" ry="20" transform="rotate(28 102 54)" fill="#24384F"/><g transform="rotate(18 112 34)"><rect x="109" y="17" width="6" height="30" rx="3" fill="#9AA7B4"/><circle cx="112" cy="13" r="8" fill="#9AA7B4"/><rect x="109" y="3" width="6" height="9" fill="#E5F6EE"/></g></g><g class="tblink"><circle cx="47" cy="46" r="8.5" fill="#fff"/><circle cx="73" cy="46" r="8.5" fill="#fff"/><circle cx="48.5" cy="47" r="4.2" fill="#12263A"/><circle cx="71.5" cy="47" r="4.2" fill="#12263A"/><circle cx="50" cy="45" r="1.3" fill="#fff"/><circle cx="73" cy="45" r="1.3" fill="#fff"/></g><circle cx="37" cy="60" r="5" fill="#FF9AA2" opacity=".6"/><circle cx="83" cy="60" r="5" fill="#FF9AA2" opacity=".6"/><polygon points="52,56 68,56 60,68" fill="#F6A13A"/><g class="hat"><path d="M31,32 C31,8 89,8 89,32 Z" fill="#FFC72C"/><rect x="56" y="9" width="8" height="22" fill="#F5A800"/><rect x="25" y="30" width="70" height="6" rx="3" fill="#F5A800"/></g></svg>';
 const isLow = r => r.limit !== null && r.akhir <= r.limit;
 const isMid = r => !isLow(r) && r.limit !== null && r.awal > 0 && r.akhir <= r.awal * 0.4;
 
@@ -289,7 +300,7 @@ function render(){
   const list = Object.values(g).sort((p, q) => (toDate(p.tanggal) || 0) - (toDate(q.tanggal) || 0));
   $('rusak').innerHTML = list.length ? list.map(r =>
     `<tr><td class="tgl" data-l="Tanggal Report Kerusakan">${tglH(r.tanggal)}</td><td class="kd" data-l="Kode">${esc(r.kode)}</td><td class="nama">${esc(r.nama)}</td><td class="n" data-l="Jumlah">${nf(r.jumlah)}</td><td class="ket" data-l="Keterangan">${esc(r.ket) || '-'}</td><td class="ret" data-l="Tanggal Return">${r.ret ? tglH(r.ret) : '-'}</td></tr>`).join('')
-    : '<tr><td colspan="6" class="empty">Belum ada barang rusak tercatat.</td></tr>';
+    : '<tr class="emptyrow"><td colspan="6" class="empty aman"><div class="thumb">' + TECH + '</div><div class="info-rusak"><b>Tidak ada barang rusak</b><small>Semua barang dalam kondisi baik</small></div></td></tr>';
   first = false;
 }
 
