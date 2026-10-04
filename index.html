@@ -191,9 +191,8 @@ tr.flash{animation:flashrow 2.4s ease}
     <h2 id="ttl">Rekap Barang</h2>
     <div class="tools">
       <input id="q" type="search" placeholder="Cari kode / nama barang…" aria-label="Cari barang">
-      <button id="fAll" class="act">Semua</button>
-      <button id="fLow">Perlu request</button>
-      <button id="fMid">Stock menipis</button>
+      <button id="fAll" class="act">Semua Barang</button>
+      <button id="fLow">Perlu Request</button>
       <button id="fRusak">Barang Rusak</button>
     </div>
     <div class="wrap" id="rekapBox"><table id="t1">
@@ -321,25 +320,32 @@ async function load(){
 $('q').oninput = () => DATA && render();
 let onlyRusak = false;
 function setFilter(v){
-  onlyLow = v === true; onlyMid = v === 'mid'; onlyRusak = v === 'rusak';
-  const none = !onlyLow && !onlyMid && !onlyRusak;
-  $('fAll').className = none ? 'act' : ''; $('fLow').className = onlyLow ? 'act' : '';
-  $('fMid').className = onlyMid ? 'act' : ''; $('fRusak').className = onlyRusak ? 'act' : '';
+  onlyLow = v === true; onlyMid = false; onlyRusak = v === 'rusak';
+  const semua = !onlyLow && !onlyRusak;
+  $('fAll').className = semua ? 'act' : ''; $('fLow').className = onlyLow ? 'act' : '';
+  $('fRusak').className = onlyRusak ? 'act' : '';
   $('rekapBox').classList.toggle('hide', onlyRusak);
   $('sec-rusak').classList.toggle('hide', !onlyRusak);
-  $('q').classList.toggle('hide', onlyRusak);
+  $('q').classList.toggle('hide', !semua);
+  if (!semua) $('q').value = '';
   $('ttl').textContent = onlyRusak ? 'Barang Rusak' : 'Rekap Barang';
   DATA && render();
 }
+function sorotMenipis(){
+  setFilter(false);
+  const rows = Array.from(document.querySelectorAll('#rekap tr.mid'));
+  if (!rows.length) { go('sec-rekap'); return; }
+  rows[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+  rows.forEach(tr => { tr.classList.add('flash'); setTimeout(() => tr.classList.remove('flash'), 2400); });
+}
 $('fAll').onclick = () => setFilter(false);
 $('fLow').onclick = () => setFilter(true);
-$('fMid').onclick = () => setFilter('mid');
 $('fRusak').onclick = () => setFilter('rusak');
 const go = id => $(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
 [['kc1', () => { setFilter(false); go('sec-rekap'); }],
  ['kcard', () => { setFilter(true); go('sec-rekap'); }],
  ['kc3', () => { setFilter('rusak'); go('sec-rekap'); }],
- ['kc4', () => { setFilter('mid'); go('sec-rekap'); }]].forEach(([id, fn]) => {
+ ['kc4', () => sorotMenipis()]].forEach(([id, fn]) => {
   const el = $(id); el.onclick = fn;
   el.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); } };
 });
