@@ -23,7 +23,11 @@ header{background:linear-gradient(120deg,#0B3C49,#0E7C86 60%,#2BB3A3);color:#fff
 .brand .sub{grid-column:2;grid-row:2;align-self:start}
 .brand .live{grid-column:3;grid-row:1;align-self:start;justify-self:end}
 #cd{font-weight:600;font-variant-numeric:tabular-nums;background:rgba(255,255,255,.2);padding:1px 8px;border-radius:99px}
-.logo{background:#fff;border-radius:16px;padding:10px 14px;box-shadow:0 6px 18px #0b3c4944;animation:slidein .7s ease both}
+.logo{background:#fff;position:relative;overflow:hidden;border-radius:16px;padding:10px 14px;box-shadow:0 6px 18px #0b3c4944;animation:slidein .7s ease both}
+.logo::after{content:'';position:absolute;top:-30%;bottom:-30%;left:-60%;width:38%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.95) 50%,transparent);transform:skewX(-20deg);animation:shine 3.8s ease-in-out infinite;pointer-events:none}
+@keyframes shine{0%,50%{left:-60%}100%{left:130%}}
+.logo::before{content:'\2726';position:absolute;top:4px;right:9px;z-index:2;font-size:15px;color:#F5B820;pointer-events:none;animation:twinkle 2.2s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:0;transform:scale(.3) rotate(0)}50%{opacity:1;transform:scale(1.15) rotate(35deg)}}
 .logo img{display:block;height:auto;width:100%}
 .top{width:min(1280px,100%);margin:0 auto;padding:0 clamp(16px,4vw,48px);display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center}
 h1{margin:0;font-size:clamp(22px,4vw,34px);font-weight:800}
@@ -162,7 +166,7 @@ tr.flash{animation:flashrow 2.4s ease}
  td.stat{grid-column:span 2;order:1;align-self:end}
  td.lvl{grid-column:1/-1;order:2}
  td.tgl{grid-column:1/-1;font-weight:600}
- td.ket,td.ret{grid-column:1/-1}
+ td.ket,td.ret,td.st{grid-column:1/-1}
  #t2 td:empty{display:none}
  td[data-l]::before{font-weight:400}
  td.tgl{font-size:14px}
@@ -178,7 +182,8 @@ tr.flash{animation:flashrow 2.4s ease}
  #t2 td.kd{grid-column:span 1;order:3}
  #t2 td.n{grid-column:span 1;order:4}
  #t2 td.nama{grid-column:1/-1;order:5;margin-top:0;font-size:13px;font-weight:600}
- #t2 td.ket{grid-column:1/-1;order:6}
+ #t2 td.st{grid-column:1/-1;order:6}
+ #t2 td.ket{grid-column:1/-1;order:7}
 }
 </style>
 </head>
@@ -215,8 +220,8 @@ tr.flash{animation:flashrow 2.4s ease}
   <section id="sec-rusak" class="hide">
     <h2>Barang Rusak</h2>
     <div class="chips" id="ket"></div>
-    <div class="wrap"><table id="t2" style="min-width:760px">
-      <thead><tr><th>Tanggal Report Kerusakan</th><th>Kode</th><th>Nama Barang</th><th class="n">Jumlah</th><th>Keterangan</th><th>Tanggal Return</th></tr></thead>
+    <div class="wrap"><table id="t2" style="min-width:900px">
+      <thead><tr><th>Tanggal Report Kerusakan</th><th>Kode</th><th>Nama Barang</th><th class="n">Jumlah</th><th>Status</th><th>Keterangan</th><th>Tanggal Return</th></tr></thead>
       <tbody id="rusak"></tbody>
     </table></div>
   </section>
@@ -224,7 +229,7 @@ tr.flash{animation:flashrow 2.4s ease}
 
 <script>
 // 1) Tempel URL Web App Apps Script (berakhiran /exec) di sini:
-const API_URL = 'https://script.google.com/macros/s/AKfycbwNM1zLFGgWvIy4PlUCuox2deSOhc8aBWOKy-mClFxLBLte4ATTe4Sz_jbtu704YZ7X/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzptl-YZIhKfe6JZUbfak8FQ8TM61dGIYb2PfTSYRRt4OV4k8pPAayo5f9aiz12D4VI/exec';
 const REFRESH_MS = 120000; // 2 menit
 
 let animRows = true, barT, entMs = 0;
@@ -307,20 +312,24 @@ function render(){
   const by = {};
   d.rusak.forEach(r => { const k = r.ket || 'Belum ada keterangan'; by[k] = (by[k] || 0) + r.jumlah; });
   $('ket').innerHTML = Object.keys(by).map(k => `<div class="chip"><b>${nf(by[k])}</b> pcs<br><small>${esc(k)}</small></div>`).join('');
-  // Gabungkan: kode + keterangan + tanggal return sama => jumlah dijumlahkan, tanggal report diambil yang terakhir
+  // Gabungkan per kode barang: jumlah dijumlahkan, tanggal report & return diambil yang terakhir
   const g = {};
   d.rusak.forEach(r => {
-    const k = [r.kode, r.ket, r.ret].join('|'), x = g[k];
-    if (!x) { g[k] = Object.assign({}, r); return; }
+    const x = g[r.kode] || (g[r.kode] = { kode: r.kode, nama: r.nama, jumlah: 0, tanggal: '', ret: '', st: {}, kt: {} });
     x.jumlah += r.jumlah;
+    if (!x.nama && r.nama) x.nama = r.nama;
     const a = toDate(x.tanggal), b = toDate(r.tanggal);
     if (b && (!a || b > a)) x.tanggal = r.tanggal;
-    if (!x.nama && r.nama) x.nama = r.nama;
+    const c = toDate(x.ret), e = toDate(r.ret);
+    if (e && (!c || e > c)) x.ret = r.ret;
+    if (r.status) x.st[r.status] = (x.st[r.status] || 0) + r.jumlah;
+    if (r.ket) x.kt[r.ket] = (x.kt[r.ket] || 0) + r.jumlah;
   });
+  const ringkas = o => { const k = Object.keys(o); return k.length > 1 ? k.map(n => n + ' (' + nf(o[n]) + ')').join(', ') : (k[0] || ''); };
   const list = Object.values(g).sort((p, q) => (toDate(p.tanggal) || 0) - (toDate(q.tanggal) || 0));
   $('rusak').innerHTML = list.length ? list.map(r =>
-    `<tr><td class="tgl" data-l="Tanggal Report Kerusakan">${tglH(r.tanggal)}</td><td class="kd" data-l="Kode">${esc(r.kode)}</td><td class="nama">${esc(r.nama)}</td><td class="n" data-l="Jumlah">${nf(r.jumlah)}</td><td class="ket" data-l="Keterangan">${esc(r.ket) || '-'}</td><td class="ret" data-l="Tanggal Return">${r.ret ? tglH(r.ret) : '-'}</td></tr>`).join('')
-    : '<tr class="emptyrow"><td colspan="6" class="empty aman"><div class="thumb">' + TECH + '</div><div class="info-rusak"><b>Tidak ada barang rusak</b><small>Semua barang dalam kondisi baik</small></div></td></tr>';
+    `<tr><td class="tgl" data-l="Tanggal Report Kerusakan">${tglH(r.tanggal)}</td><td class="kd" data-l="Kode">${esc(r.kode)}</td><td class="nama">${esc(r.nama)}</td><td class="n" data-l="Jumlah">${nf(r.jumlah)}</td><td class="st" data-l="Status">${esc(ringkas(r.st)) || '-'}</td><td class="ket" data-l="Keterangan">${esc(ringkas(r.kt)) || '-'}</td><td class="ret" data-l="Tanggal Return">${r.ret ? tglH(r.ret) : '-'}</td></tr>`).join('')
+    : '<tr class="emptyrow"><td colspan="7" class="empty aman"><div class="thumb">' + TECH + '</div><div class="info-rusak"><b>Tidak ada barang rusak</b><small>Semua barang dalam kondisi baik</small></div></td></tr>';
   if (animRows) {
     document.querySelectorAll('#ket .chip').forEach((c, i) => { c.classList.add('rin'); c.style.setProperty('--d', i * STEP + 'ms'); });
     const base = document.querySelectorAll('#ket .chip').length * STEP;
